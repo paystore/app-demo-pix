@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Pix Demo</string>
+    <string name="cob_gen">Gerar Cobrança</string>
+    <string name="pix_list">Listar PIX</string>
+    <string name="pix_find">Consultar PIX</string>
+    <string name="app_pix_is_installed">Verificar App Pix Instalado</string>
+    <string name="pix_refund">Devolução</string>
+    <string name="back_button">Voltar</string>
+    <string name="send_value">Enviar valor</string>
+    <string name="is_installed">App Pix instalado</string>
+    <string name="not_is_installed">App Pix não instalado</string>
+    <string name="client_id">Client ID</string>
+    <string name="tx_id">Tx-ID</string>
+    <string name="current_day">Dia \natual</string>
+    <string name="current_month">Mês \natual</string>
+    <string name="another_period">Outro \nperíodo</string>
+    <string name="print_customer_receipt">Imprimir Via Cliente</string>
+    <string name="print_merchant_receipt">Imprimir Via Estabelecimento</string>
+    <string name="active">Ativa</string>
+    <string name="sale">Venda</string>
+    <string name="refunded">Devolvido</string>
+    <string name="refund_processing">Devolução em Processamento</string>
+    <string name="refund_not_done">Não Realizado</string>
+    <string name="cancelled_charge">Cobrança Cancelada</string>
+    <string name="expired">Expirada</string>
+    <string name="value">Valor</string>
+    <string name="status">Status</string>
+    <string name="consult">Consultado</string>
+    <string name="payment_cancelled">Pagamento Cancelado</string>
+    <string name="payment_successfully_made">Pagamento Realizado com Sucesso</string>
+    <string name="empty_list">Lista Vazia</string>
+</resources>
