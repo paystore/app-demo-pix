@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class FilterPixViewModel: ViewModel() {
 
-    private val _selectedCard = MutableStateFlow<Int>(1)
-    private val _startTime = MutableStateFlow<String>("00:00")
-    private val _endTime = MutableStateFlow<String>(DateUtils().getCurrentTime())
-    private val _startDate = MutableStateFlow<String>(DateUtils().getDate30DaysAgo())
-    private val _endDate = MutableStateFlow<String>(DateUtils().getCurrentDate())
+    private val _selectedCard = MutableStateFlow(1)
+    private val _startTime = MutableStateFlow("00:00")
+    private val _endTime = MutableStateFlow(DateUtils().getCurrentTime())
+    private val _startDate = MutableStateFlow(DateUtils().getDate30DaysAgo())
+    private val _endDate = MutableStateFlow(DateUtils().getCurrentDate())
     var selectedCard = _selectedCard.asStateFlow()
     var startTime = _startTime.asStateFlow()
     var endTime = _endTime.asStateFlow()
@@ -48,7 +48,7 @@ class FilterPixViewModel: ViewModel() {
         _endDate.value = newValue
     }
 
-    fun goingToList( ) {
+    private fun goingToList( ) {
         if (_selectedCard.value == 1) {
             upgradeStartDate(DateUtils().getCurrentDate())
             upgradeEndDate(DateUtils().getCurrentDate())

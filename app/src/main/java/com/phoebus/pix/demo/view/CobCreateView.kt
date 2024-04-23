@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package com.phoebus.pix.demo.view
 
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -71,7 +73,7 @@ fun CobCreateView(
                 navigationIcon = {
                     IconButton(onClick = navigateUp) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -191,9 +193,7 @@ fun InputValue(
         ),
         onValueChange = {
             if (it.length <= 9 && viewModel.validateInput(it)) {
-                if (it.startsWith("0")) {
-                    ""
-                } else {
+                if (!it.startsWith("0")) {
                     viewModel.upgradeCobValue(it)
                 }
             } else {

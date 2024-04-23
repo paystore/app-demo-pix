@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
@@ -77,7 +77,7 @@ fun FilterPixView(
                 navigationIcon = {
                     IconButton(onClick = navigateUp) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -98,94 +98,72 @@ fun FilterPixScreen(
     viewModel: FilterPixViewModel = viewModel(),
     navController: NavController,
 ) {
-    var selectedCard = viewModel.selectedCard.collectAsState()
+    val selectedCard = viewModel.selectedCard.collectAsState().value
     val context = LocalContext.current
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier.padding(5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LazyRow(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                items(getListPixCards()) { item ->
-                    ElevatedCard(
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier
-                            .size(100.dp)
-                            .padding(5.dp),
-                        onClick = {
-                            viewModel.upgradeSelectedCard(item.id)
-                        },
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
-                        enabled = true,
-                        colors = CardColors(
-                            containerColor = if (item.id == selectedCard.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
-                            contentColor = if (item.id == selectedCard.value) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
-                            disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                            disabledContentColor = MaterialTheme.colorScheme.onSecondary
-                        )
 
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = stringResource(item.text),
-                                modifier = Modifier.size(35.dp)
-                            )
-                            Text(
-                                text = stringResource(item.text),
-                                textAlign = TextAlign.Center,
-                                fontSize = 14.sp,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                }
-            }
-            if (selectedCard.value == 1) {
-                TimesPiecker(viewModel)
-            } else if (selectedCard.value == 3) {
-                TimesPiecker(viewModel)
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            PixCardsRow(selectedCard, viewModel)
 
-                DatesPiecker(viewModel)
+            if (selectedCard == 1 || selectedCard == 3) {
+                TimesPiecker(viewModel)
+                if (selectedCard == 3) DatesPiecker(viewModel)
             }
 
+            ListPixButton(context, viewModel, navController)
+        }
+    }
+}
 
-            ElevatedButton(
-                modifier = Modifier.padding(15.dp),
-                onClick = {
-
-                    val startDateTime = viewModel.getStartDateTimeForNavigation()
-                    val endDateTime = viewModel.getEndDateTimeForNavigation()
-                    if(DateUtils().validTime(viewModel.startTime.value, viewModel.endTime.value)){
-                        navController.navigate(
-                            "${Destinations.LISTPIX.name}/$startDateTime/$endDateTime")
-                    } else {
-                        Toast.makeText(context, "Período inválido!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+@Composable
+fun PixCardsRow(selectedCard: Int, viewModel: FilterPixViewModel) {
+    LazyRow(modifier = Modifier.padding(10.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        items(getListPixCards()) { item ->
+            ElevatedCard(
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.size(100.dp).padding(5.dp),
+                onClick = { viewModel.upgradeSelectedCard(item.id) },
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                enabled = true,
+                colors = CardColors(
+                    containerColor = if (item.id == selectedCard) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
+                    contentColor = if (item.id == selectedCard) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondary,
+                    disabledContentColor = MaterialTheme.colorScheme.onSecondary
+                )
             ) {
-                Text(text = "Listar Pix")
+                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(imageVector = item.icon, contentDescription = stringResource(item.text), modifier = Modifier.size(35.dp))
+                    Text(text = stringResource(item.text), textAlign = TextAlign.Center, fontSize = 14.sp, style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
     }
 }
+
+@Composable
+fun ListPixButton(context: Context, viewModel: FilterPixViewModel, navController: NavController) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ElevatedButton(
+            modifier = Modifier.padding(15.dp),
+            onClick = {
+                val startDateTime = viewModel.getStartDateTimeForNavigation()
+                val endDateTime = viewModel.getEndDateTimeForNavigation()
+                if (DateUtils().validTime(viewModel.startTime.value, viewModel.endTime.value)) {
+                    navController.navigate("${Destinations.LISTPIX.name}/$startDateTime/$endDateTime")
+                } else {
+                    Toast.makeText(context, "Período inválido!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        ) {
+            Text(text = "Listar Pix")
+        }
+    }
+}
+
 
 @Composable
 fun TimesPiecker(
@@ -204,7 +182,7 @@ fun TimesPiecker(
             viewModel.upgradeStartTime(it)
         }
         Text("a", modifier = Modifier.padding(vertical = 0.dp, horizontal = 10.dp))
-        TimePickerText(time = endTime.value, minTime = startTime.value) {
+        TimePickerText(time = endTime.value) {
             viewModel.upgradeEndTime(it)
         }
     }
@@ -237,7 +215,6 @@ fun DatesPiecker(
 fun TimePickerText(
     modifier: Modifier = Modifier,
     time: String = "00:00",
-    minTime: String? = null,
     onTimeSelected: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -245,7 +222,7 @@ fun TimePickerText(
     Column(
         modifier = modifier
             .clickable {
-                openTimePicker(context, minTime, onTimeSelected)
+                openTimePicker(context, onTimeSelected)
             }
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -285,12 +262,11 @@ fun DatePickerText(
 
 private fun openTimePicker(
     context: Context,
-    minTime: String? = null,
     onTimeSelected: (String) -> Unit
 ) {
     val calendar = Calendar.getInstance()
-    val hour = calendar.get(Calendar.HOUR_OF_DAY)
-    val minute = calendar.get(Calendar.MINUTE)
+    val hour = calendar[Calendar.HOUR_OF_DAY]
+    val minute = calendar[Calendar.MINUTE]
 
     val timePicker = TimePickerDialog(
         context,
@@ -312,9 +288,9 @@ private fun openDatePicker(
     onDateSelected: (String) -> Unit
 ) {
     val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+    val year = calendar[Calendar.YEAR]
+    val month = calendar[Calendar.MONTH]
+    val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
 
     val datePicker = DatePickerDialog(
         context,
@@ -328,8 +304,8 @@ private fun openDatePicker(
         dayOfMonth
     )
     if (minDate != null) {
-        val minDate = DateUtils().stringDateToDate(minDate)
-        datePicker.datePicker.minDate = minDate!!.time
+        val parsedMinDate = DateUtils().stringDateToDate(minDate)
+        datePicker.datePicker.minDate = parsedMinDate!!.time
     }
     val maxDate = calendar.timeInMillis
     datePicker.datePicker.maxDate = maxDate

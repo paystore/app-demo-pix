@@ -1,14 +1,14 @@
 package com.phoebus.pix.demo.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Pix
-import com.phoebus.pix.demo.ui.theme.components.MenuItem
-import com.phoebus.pix.demo.ui.theme.components.Destinations
 import com.phoebus.pix.demo.R
+import com.phoebus.pix.demo.ui.theme.components.Destinations
+import com.phoebus.pix.demo.ui.theme.components.MenuItem
 import java.util.LinkedList
 
 fun getMainItems(): List<MenuItem> {
@@ -27,7 +27,7 @@ fun getMainItems(): List<MenuItem> {
         MenuItem(
             2,
             R.string.pix_find,
-            Icons.Default.ManageSearch,
+            Icons.AutoMirrored.Filled.ManageSearch,
             Destinations.CONSULTPIX.name)
     )
 
@@ -35,7 +35,7 @@ fun getMainItems(): List<MenuItem> {
         MenuItem(
             3,
             R.string.pix_list,
-            Icons.Default.List,
+            Icons.AutoMirrored.Filled.List,
             Destinations.FILTERPIX.name)
     )
 

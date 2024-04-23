@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 class ConsultCobRequestViewModel : ViewModel() {
 
     private var errorMessage: String by mutableStateOf("")
-    private val _printCustomerReceipt = MutableStateFlow<Boolean>(true)
-    private val _printMerchantReceipt = MutableStateFlow<Boolean>(true)
+    private val _printCustomerReceipt = MutableStateFlow(true)
+    private val _printMerchantReceipt = MutableStateFlow(true)
 
     var printCustomerReceipt = _printCustomerReceipt.asStateFlow()
     var printMerchantReceipt = _printMerchantReceipt.asStateFlow()

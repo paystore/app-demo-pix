@@ -16,7 +16,7 @@ data class CardItem(
 )
 
 fun getListPixCards(): List<CardItem> {
-    var items = LinkedList<CardItem>()
+    val items = LinkedList<CardItem>()
 
     items.add(
         CardItem(1, R.string.current_day, Icons.Default.CalendarToday, true)

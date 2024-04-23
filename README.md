@@ -1,3 +1,12 @@
 # app-smart-demo-pix
 
-app-demo para integração com a lib pix.
+Tabela de Compatibilidade entre pix-api e app-smart-pix
+
+A tabela abaixo apresenta a compatibilidade entre as versões da biblioteca de integração pix (pix-api) e o aplicativo Smart Pix (app-smart-pix):
+
+Confira a documentação da API [aqui](http://127.0.0.1:8000/api/docs/tabs/pix/pre-requisitos/), para mais detalhes sobre a integração.
+
+| Versão aar           | Versões do App Pix compatíveis |
+|----------------------|--------------------------------|
+| pix-sdk-1.0.0.0.aar  | v1.2.0.0                       |
+

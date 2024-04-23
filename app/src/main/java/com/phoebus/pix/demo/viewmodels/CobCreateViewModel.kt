@@ -12,11 +12,11 @@ import java.util.UUID
 
 class CobCreateViewModel : ViewModel() {
 
-    private val _flagValue = MutableStateFlow<Boolean>(false)
-    private val _printCustomerReceipt = MutableStateFlow<Boolean>(true)
-    private val _printMerchantReceipt = MutableStateFlow<Boolean>(true)
-    private val _cobValue = MutableStateFlow<String>("")
-    private val _pixClientId = MutableStateFlow<String>(UUID.randomUUID().toString())
+    private val _flagValue = MutableStateFlow(false)
+    private val _printCustomerReceipt = MutableStateFlow(true)
+    private val _printMerchantReceipt = MutableStateFlow(true)
+    private val _cobValue = MutableStateFlow("")
+    private val _pixClientId = MutableStateFlow(UUID.randomUUID().toString())
 
     var cobValue = _cobValue.asStateFlow()
     var flagValue = _flagValue.asStateFlow()
@@ -72,7 +72,7 @@ class CobCreateViewModel : ViewModel() {
         _flagValue.value = false
     }
 
-    fun isDigit(char: Char): Boolean {
+    private fun isDigit(char: Char): Boolean {
         return char in '0'..'9'
     }
 

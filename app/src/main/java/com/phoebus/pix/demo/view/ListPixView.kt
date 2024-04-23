@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -70,7 +70,7 @@ fun ListPixView(
                 navigationIcon = {
                     IconButton(onClick = navigateUp) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -108,13 +108,13 @@ fun ListPixScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val listPix = viewModel.listPix.collectAsState()
-            if (listPix.value != null && listPix.value.isNotEmpty()) {
+            if (listPix.value.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     items(listPix.value) { item ->
-                        pix(
+                        Pix(
                             statusPix = item.status,
                             pixClientId = item.clientId,
                             valuePix = item.cobValue,
@@ -130,7 +130,7 @@ fun ListPixScreen(
 }
 
 @Composable
-fun pix(
+fun Pix(
     statusPix: String,
     pixClientId: String?,
     valuePix: String,

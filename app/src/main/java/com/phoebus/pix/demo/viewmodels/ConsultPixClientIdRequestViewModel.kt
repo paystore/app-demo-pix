@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ConsultPixClientIdRequestViewModel : ViewModel() {
 
-    var erroMessage: String by mutableStateOf("")
+    private var erroMessage: String by mutableStateOf("")
 
     fun sendRequest(pixClient: PixClient, clientId: String, context: Context) {
 
