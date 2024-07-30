@@ -9,4 +9,5 @@ Confira a documentação da API [aqui](http://177.69.97.18:6655/tabs/pix/pre-req
 | Versão aar           | Versões do App Pix compatíveis |
 |----------------------|--------------------------------|
 | pix-sdk-1.0.0.0.aar  | v1.2.0.0                       |
+| pix-sdk-1.0.1.0.aar  | v1.2.2.0                       |
 
