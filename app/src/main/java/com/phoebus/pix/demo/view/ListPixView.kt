@@ -108,18 +108,21 @@ fun ListPixScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val listPix = viewModel.listPix.collectAsState()
-            if (listPix.value.isNotEmpty()) {
+            if (listPix.value != null && listPix.value!!.pix.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(listPix.value) { item ->
-                        Pix(
-                            statusPix = item.status,
-                            pixClientId = item.clientId,
-                            valuePix = item.cobValue,
-                            txId = item.txId
-                        )
+                    listPix.value?.let {
+                        items(it.pix) { item ->
+                            Pix(
+                                statusPix = item.status.getValue(),
+                                pixClientId = item.pixClientId,
+                                valuePix = item.cobValue,
+                                txId = item.txID
+                            )
+                        }
+
                     }
                 }
             } else {
@@ -153,7 +156,10 @@ fun Pix(
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween,
             ) {
                 Text(
-                    text = ResponseUtils().chargeStatus(context = LocalContext.current, status = statusPix),
+                    text = ResponseUtils().chargeStatus(
+                        context = LocalContext.current,
+                        status = statusPix
+                    ),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
@@ -187,7 +193,7 @@ fun TextWithCopyIcon(
             text = "$type: $text",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
-                .padding(top = 10.dp,bottom = 10.dp)
+                .padding(top = 10.dp, bottom = 10.dp)
         )
         Icon(
             imageVector = Icons.Default.ContentCopy,
@@ -201,3 +207,4 @@ fun TextWithCopyIcon(
 
     }
 }
+

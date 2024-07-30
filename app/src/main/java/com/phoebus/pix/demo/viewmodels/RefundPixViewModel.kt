@@ -6,13 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.phoebus.pix.demo.services.refundPixService
+import com.phoebus.pix.demo.services.RefundPixService
 import com.phoebus.pix.sdk.PixClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class RefundPixViewModel : ViewModel() {
+class RefundPixViewModel: ViewModel() {
 
     private var errorMessage: String by mutableStateOf("")
     private val _printCustomerReceipt = MutableStateFlow(true)
@@ -20,6 +20,7 @@ class RefundPixViewModel : ViewModel() {
 
     var printCustomerReceipt = _printCustomerReceipt.asStateFlow()
     var printMerchantReceipt = _printMerchantReceipt.asStateFlow()
+
 
     fun changePrintCustomerReceipt() {
         _printCustomerReceipt.value = !_printCustomerReceipt.value
@@ -29,21 +30,20 @@ class RefundPixViewModel : ViewModel() {
         _printMerchantReceipt.value = !_printMerchantReceipt.value
     }
 
-    fun sendRequest(pixClient: PixClient, txId: String, context: Context) {
+    fun request(pixClient: PixClient, context: Context) {
 
         viewModelScope.launch {
             try {
-                refundPixService(
+                RefundPixService(
                     pixClient,
-                    txId,
                     printCustomerReceipt.value,
                     printMerchantReceipt.value,
                     context
+
                 )
             } catch (e: Exception) {
                 errorMessage = e.message.toString()
             }
         }
     }
-
 }

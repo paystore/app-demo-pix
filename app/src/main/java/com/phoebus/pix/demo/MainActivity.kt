@@ -5,24 +5,28 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.phoebus.pix.demo.services.SyncDataService
 import com.phoebus.pix.demo.ui.theme.components.Destinations
-import com.phoebus.pix.ui.theme.AppsmartdemopixTheme
 import com.phoebus.pix.demo.utils.ConstantsUtils
 import com.phoebus.pix.demo.view.CheckAppPixView
 import com.phoebus.pix.demo.view.ClientIDView
 import com.phoebus.pix.demo.view.CobCreateView
+import com.phoebus.pix.demo.view.ConsultLoading
 import com.phoebus.pix.demo.view.FilterPixView
 import com.phoebus.pix.demo.view.FindPixView
 import com.phoebus.pix.demo.view.HomeView
 import com.phoebus.pix.demo.view.ListPixView
+import com.phoebus.pix.demo.view.RefundByTxIdView
 import com.phoebus.pix.demo.view.RefundPixView
 import com.phoebus.pix.demo.view.TxIdView
 import com.phoebus.pix.sdk.PixClient
+import com.phoebus.pix.ui.theme.AppsmartdemopixTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +35,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pixClient = PixClient(applicationContext)
+
         setContent {
             AppsmartdemopixTheme {
                 val navController = rememberNavController()
@@ -41,6 +46,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         HomeView(pixClient, navController)
                     }
+
                     composable(
                         route = Destinations.COBCREATE.name
                     ) {
@@ -54,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Destinations.FILTERPIX.name
                     ) {
-                        FilterPixView(navController){
+                        FilterPixView(navController) {
                             navController.navigateUp()
                         }
                     }
@@ -64,10 +70,10 @@ class MainActivity : ComponentActivity() {
                             navArgument("startDate") { type = NavType.StringType },
                             navArgument("endDate") { type = NavType.StringType }
                         )
-                    ) {backStackEntry ->
+                    ) { backStackEntry ->
                         val startDate = backStackEntry.arguments?.getString("startDate")
                         val endDate = backStackEntry.arguments?.getString("endDate")
-                        ListPixView(pixClient, startDate, endDate){ navController.navigateUp() }
+                        ListPixView(pixClient, startDate, endDate) { navController.navigateUp() }
                     }
                     composable(
                         route = Destinations.CONSULTPIX.name
@@ -93,8 +99,44 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Destinations.PIXDREFUND.name
                     ) {
-                        RefundPixView(pixClient) {
+                        RefundByTxIdView(pixClient) {
                             navController.navigateUp()
+                        }
+                    }
+
+                    composable(
+                        route = Destinations.CONSULTLOADING.name
+                     ) {
+                        ConsultLoading(
+                            navController,
+                            pixClient = pixClient
+                        )
+                    }
+
+                    composable(
+                        route = Destinations.SYNCDATAPIX.name
+                    )
+                    {
+                        // Execute o serviço sem sair da tela atual
+                        LaunchedEffect(Unit) {
+                            try {
+                                val syncDataService = SyncDataService(this@MainActivity)
+                                syncDataService.execute(pixClient)
+                                // Voltar para a tela HOME após a execução do serviço
+                                navController.navigate(Destinations.HOME.name) {
+                                    popUpTo(Destinations.HOME.name) { inclusive = true }
+                                }
+                            } catch (e: Exception) {
+                                println(e.message.toString())
+                            }
+                        }
+                    }
+                    composable(
+                        route = Destinations.REFUND.name
+                    ){
+                        RefundPixView(pixClient, navController) {
+                            navController.navigateUp()
+
                         }
                     }
                 }

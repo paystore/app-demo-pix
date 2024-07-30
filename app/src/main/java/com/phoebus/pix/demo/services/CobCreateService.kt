@@ -8,6 +8,7 @@ import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.data.enum.ChargeStatus
 import com.phoebus.pix.demo.data.model.CreateCobRequest
 import com.phoebus.pix.demo.data.model.PixErrorResponse
+import com.phoebus.pix.demo.data.model.PixResponse
 import com.phoebus.pix.demo.viewmodels.CobCreateViewModel
 import com.phoebus.pix.sdk.PixClient
 
@@ -38,13 +39,10 @@ fun cobCreateService(
             }
 
             override fun onSuccess(response: String?) {
-                println("Pagamento: $response")
+                val pixResponse = gson.fromJson(response, PixResponse::class.java)
+                println("Pagamento: $pixResponse")
 
-                if (response != null && response.contains(
-                        ChargeStatus.REMOVED_BY_USER.getValue(),
-                        true
-                    )
-                ) {
+                if (pixResponse != null && pixResponse.status == ChargeStatus.REMOVED_BY_USER ) {
                     Toast.makeText(context, R.string.payment_cancelled, Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, R.string.payment_successfully_made, Toast.LENGTH_SHORT)

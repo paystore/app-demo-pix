@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Date
 
-fun listPixService(pixClient: PixClient, startDateTime: Date, endDateTime: Date, listPix: (Array<ListPixResponse>) -> Unit) {
+fun listPixService(pixClient: PixClient, startDateTime: Date, endDateTime: Date, listPix: (ListPixResponse) -> Unit) {
     val gson: Gson = Gson()
 
     CoroutineScope(Dispatchers.Main).launch {
@@ -21,7 +21,7 @@ fun listPixService(pixClient: PixClient, startDateTime: Date, endDateTime: Date,
 
             override fun onSuccess(response: String?) {
                 println("Response $response")
-                val list = gson.fromJson(response, Array<ListPixResponse>::class.java)
+                val list = gson.fromJson(response, ListPixResponse::class.java)
                 listPix(list)
             }
         }

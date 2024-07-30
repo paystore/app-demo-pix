@@ -3,6 +3,7 @@ package com.phoebus.pix.demo.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Pix
@@ -54,6 +55,28 @@ fun getMainItems(): List<MenuItem> {
             R.string.app_pix_is_installed,
             Icons.Default.CheckCircle,
             Destinations.CHEACKAPPPIX.name
+        )
+    )
+
+    items.add(
+        MenuItem(
+            6,
+            R.string.app_pix_sync_data,
+            Icons.Default.Cached,
+            Destinations.SYNCDATAPIX.name
+        )
+    )
+    items.add(MenuItem(7,
+        R.string.Consulta,
+        Icons.AutoMirrored.Filled.ManageSearch,
+        Destinations.CONSULTLOADING.name))
+
+    items.add(
+        MenuItem(
+            7,
+            R.string.refund,
+            Icons.Default.CurrencyExchange,
+            Destinations.REFUND.name
         )
     )
 

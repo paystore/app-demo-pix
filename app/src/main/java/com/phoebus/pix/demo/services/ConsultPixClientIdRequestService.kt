@@ -3,9 +3,9 @@ package com.phoebus.pix.demo.services
 import android.content.Context
 import android.widget.Toast
 import com.google.gson.Gson
-import com.phoebus.pix.demo.data.model.ConsultPixByClientIDResponse
 import com.phoebus.pix.demo.data.model.ConsultPixByCorrelationIdRequest
 import com.phoebus.pix.demo.data.model.PixErrorResponse
+import com.phoebus.pix.demo.data.model.PixResponse
 import com.phoebus.pix.demo.utils.ResponseUtils
 import com.phoebus.pix.sdk.PixClient
 
@@ -29,7 +29,7 @@ fun consultPixClientIdRequestService(
                 println("Consultado $response")
                 if (response != null) {
                     val responseObject =
-                        gson.fromJson(response, ConsultPixByClientIDResponse::class.java)
+                        gson.fromJson(response, PixResponse::class.java)
                     val responseUtils = ResponseUtils()
                     Toast.makeText(
                         context,

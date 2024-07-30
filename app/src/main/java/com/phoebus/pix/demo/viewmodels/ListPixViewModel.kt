@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.util.Date
 
 class ListPixViewModel: ViewModel() {
-    private val _listPix = MutableStateFlow(emptyArray<ListPixResponse>())
+    private val _listPix = MutableStateFlow<ListPixResponse?>(null)
     var listPix = _listPix.asStateFlow()
 
     fun upgradeListPix(pixClint: PixClient, startDateTime: Date, endDateTime: Date) {

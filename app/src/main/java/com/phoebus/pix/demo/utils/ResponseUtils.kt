@@ -3,16 +3,16 @@ package com.phoebus.pix.demo.utils
 import android.content.Context
 import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.data.enum.ChargeStatus
-import com.phoebus.pix.demo.data.model.ConsultPixByClientIDResponse
+import com.phoebus.pix.demo.data.model.PixResponse
 
 class ResponseUtils {
 
-    fun messageConsultPix(context: Context, response: ConsultPixByClientIDResponse): String {
+    fun messageConsultPix(context: Context, response: PixResponse): String {
 
         return "${context.getString(R.string.consult)}: \n" +
                "${context.getString(R.string.value)}: ${response.cobValue} \n" +
-               "${context.getString(R.string.status)}: ${chargeStatus(context, response.status)} \n" +
-               "${context.getString(R.string.tx_id)}: ${response.txId}"
+               "${context.getString(R.string.status)}: ${chargeStatus(context, response.status.getValue())} \n" +
+               "${context.getString(R.string.tx_id)}: ${response.txID}"
     }
 
     fun chargeStatus(context: Context, status: String): String {

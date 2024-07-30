@@ -11,6 +11,9 @@ enum class Destinations(@StringRes val title: Int) {
     LISTPIX(title = R.string.pix_list),
     PIXDREFUND(title = R.string.pix_refund),
     CHEACKAPPPIX(title = R.string.app_pix_is_installed),
+    SYNCDATAPIX(title = R.string.app_pix_sync_data),
     CLIENTID(title = R.string.client_id),
-    TXID(title = R.string.tx_id)
+    TXID(title = R.string.tx_id),
+    REFUND(title = R.string.refund),
+    CONSULTLOADING(R.string.CONSULTLOADING)
 }

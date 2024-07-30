@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Pix Demo</string>
     <string name="cob_gen">Gerar Cobrança</string>
+    <string name="sync_data">Sync Data</string>
     <string name="pix_list">Listar PIX</string>
     <string name="pix_find">Consultar PIX</string>
     <string name="app_pix_is_installed">Verificar App Pix Instalado</string>
-    <string name="pix_refund">Devolução</string>
+    <string name="app_pix_sync_data">Sinc. dados</string>
+    <string name="pix_refund">Devolução por Tx-Id</string>
     <string name="back_button">Voltar</string>
     <string name="send_value">Enviar valor</string>
     <string name="is_installed">App Pix instalado</string>
@@ -29,4 +31,7 @@
     <string name="payment_cancelled">Pagamento Cancelado</string>
     <string name="payment_successfully_made">Pagamento Realizado com Sucesso</string>
     <string name="empty_list">Lista Vazia</string>
+    <string name="CONSULTLOADING"> Loading de Consulta</string>
+    <string name="Consulta">Consulta</string>
+    <string name="refund">Devolução.</string>
 </resources>
