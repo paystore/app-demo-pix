@@ -27,7 +27,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +46,8 @@ import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.utils.DateUtils
 import com.phoebus.pix.demo.utils.ResponseUtils
 import com.phoebus.pix.demo.viewmodels.ListPixViewModel
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.phastpay.sdk.client.PixClient
+import com.phoebus.pix.demo.ui.components.LoadingIndicator
 import com.phoebus.pix.ui.theme.YellowLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +67,7 @@ fun ListPixView(
                 ),
                 title = {
                     Text(
-                        text = stringResource(R.string.app_name),
+                        text = stringResource(R.string.pix_list),
                         fontWeight = FontWeight.Normal,
                         modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.titleLarge
@@ -96,37 +102,59 @@ fun ListPixScreen(
 ) {
     val startDateTime = DateUtils().stringDateTimeToDate(startDate.toString())
     val endDateTime = DateUtils().stringDateTimeToDate(endDate.toString())
-    viewModel.upgradeListPix(pixClient, startDateTime!!, endDateTime!!)
+
+    val isLoading = viewModel.isLoading.collectAsState().value
+    val errorMessage = viewModel.errorMessage.collectAsState().value
+    val context = LocalContext.current;
+
+    var lastShownMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        if (!errorMessage.isNullOrEmpty() && errorMessage != lastShownMessage) {
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+        lastShownMessage = errorMessage
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.upgradeListPix(pixClient, startDateTime!!, endDateTime!!)
+    }
+
     Surface(
         modifier = modifier
             .fillMaxSize()
             .padding(10.dp),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            modifier = Modifier.padding(5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val listPix = viewModel.listPix.collectAsState()
-            if (listPix.value != null && listPix.value!!.pix.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    listPix.value?.let {
-                        items(it.pix) { item ->
-                            Pix(
-                                statusPix = item.status.getValue(),
-                                pixClientId = item.pixClientId,
-                                valuePix = item.cobValue,
-                                txId = item.txID
-                            )
-                        }
+        if (isLoading) {
+            LoadingIndicator(text = stringResource(R.string.loading_getting))
+        } else {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val listPix = viewModel.listPix.collectAsState()
+                if (listPix.value != null && listPix.value!!.pix.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        listPix.value?.let {
+                            items(it.pix) { item ->
+                                Pix(
+                                    statusPix = item.status?.getValue(),
+                                    pixClientId = item.pixClientId,
+                                    valuePix = item.cobValue,
+                                    txId = item.txID,
+                                    pixDateTime = item.pixDateTime
+                                )
+                            }
 
+                        }
                     }
+                } else {
+                    Text(text = stringResource(R.string.empty_list))
                 }
-            } else {
-                Text(text = stringResource(R.string.empty_list))
             }
         }
     }
@@ -134,10 +162,11 @@ fun ListPixScreen(
 
 @Composable
 fun Pix(
-    statusPix: String,
+    statusPix: String?,
     pixClientId: String?,
     valuePix: String,
-    txId: String
+    txId: String,
+    pixDateTime: String
 ) {
     Surface(
         modifier = Modifier
@@ -169,6 +198,11 @@ fun Pix(
             }
             TextWithCopyIcon("TxID", txId)
             if (pixClientId != null) TextWithCopyIcon("ClientID", pixClientId)
+            val dateTime = DateUtils().formatDateTime(pixDateTime)
+            Text(
+                text = "DATA E HORA:  $dateTime",
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

@@ -1,15 +1,19 @@
 package com.phoebus.pix.demo.utils
 
 import android.util.Log
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class DateUtils{
 
     private val date: String = "dd/MM/yyyy"
     private val hourMinute: String = "HH:mm"
+    private val dateTime: String = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    private val dateTimeLayout = "dd/MM/yyyy HH:mm"
 
     fun getCurrentTime(): String {
         val calendar = Calendar.getInstance()
@@ -63,6 +67,32 @@ class DateUtils{
         val horaFinalDate = formato.parse(horaFinal)
 
         return horaInicialDate!!.before(horaFinalDate)
+    }
+    fun formatDateTime(dateTimeString: String): String {
+        val inputFormat = SimpleDateFormat(dateTime, Locale.getDefault())
+
+        val outputFormat = SimpleDateFormat(dateTimeLayout, Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+
+        val date = inputFormat.parse(dateTimeString)
+        return outputFormat.format(date!!)
+    }
+
+    fun convertToUtcIso8601(inputDateTime: String?): String? {
+        try {
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getDefault()
+
+            val date = inputFormat.parse(inputDateTime) ?: return null
+
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+            outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            return outputFormat.format(date)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+            return null
+        }
     }
 
 }

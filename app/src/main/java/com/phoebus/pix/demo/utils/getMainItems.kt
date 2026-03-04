@@ -3,10 +3,12 @@ package com.phoebus.pix.demo.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Pix
+import androidx.compose.material.icons.filled.ReceiptLong
 import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.ui.theme.components.Destinations
 import com.phoebus.pix.demo.ui.theme.components.MenuItem
@@ -77,6 +79,15 @@ fun getMainItems(): List<MenuItem> {
             R.string.refund,
             Icons.Default.CurrencyExchange,
             Destinations.REFUND.name
+        )
+    )
+
+    items.add(
+        MenuItem(
+            8,
+            R.string.report,
+            Icons.AutoMirrored.Filled.ReceiptLong,
+            Destinations.REPORT.name
         )
     )
 

@@ -30,13 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.phoebus.pix.demo.R
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.phastpay.sdk.client.PixClient
 import com.phoebus.pix.ui.theme.Green40
 import com.phoebus.pix.ui.theme.RedError
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckAppPixView(
+fun IsAppPixInstalledView(
     pixClinte: PixClient,
     navigateUp: () -> Unit
 ) {

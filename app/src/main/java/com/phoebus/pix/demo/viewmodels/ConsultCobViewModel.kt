@@ -1,25 +1,21 @@
 package com.phoebus.pix.demo.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.phoebus.phastpay.sdk.client.PixClient
-import com.phoebus.pix.demo.R
-import com.phoebus.pix.demo.data.enum.ChargeStatus
-import com.phoebus.pix.demo.services.RefundByTxIdService
+import com.phoebus.pix.demo.services.ConsultCobService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class RefundByTxIdViewModel : ViewModel() {
+class ConsultCobViewModel : ViewModel() {
 
-    private val _dialogMessage = MutableStateFlow<String?>(null)
     private var _errorMessage = MutableStateFlow<String?>(null)
     private val _printCustomerReceipt = MutableStateFlow(false)
     private val _printMerchantReceipt = MutableStateFlow(false)
     private val _previewMerchantReceipt = MutableStateFlow(true)
     private val _previewCustomerReceipt = MutableStateFlow(true)
-
+    private val _dialogMessage = MutableStateFlow<String?>(null)
 
     var printCustomerReceipt = _printCustomerReceipt.asStateFlow()
     var printMerchantReceipt = _printMerchantReceipt.asStateFlow()
@@ -27,7 +23,6 @@ class RefundByTxIdViewModel : ViewModel() {
     var previewMerchantReceipt = _previewMerchantReceipt.asStateFlow()
     var dialogMessage = _dialogMessage.asStateFlow()
     var errorMessage = _errorMessage.asStateFlow()
-
 
     fun changePrintCustomerReceipt() {
         _printCustomerReceipt.value = !_printCustomerReceipt.value
@@ -53,14 +48,11 @@ class RefundByTxIdViewModel : ViewModel() {
         _errorMessage.value = message
     }
 
-
     fun sendRequest(pixClient: PixClient, txId: String) {
         changeErrorMessage(null);
-        changeDialogMessage(null);
-
         viewModelScope.launch {
-            val refundByTxIdService = RefundByTxIdService();
-            refundByTxIdService.invoke(
+            val consultCobService = ConsultCobService();
+            consultCobService.invoke(
                 pixClient,
                 txId,
                 printCustomerReceipt.value,
@@ -69,14 +61,6 @@ class RefundByTxIdViewModel : ViewModel() {
                 previewMerchantReceipt.value
             ).collect { result ->
                 when {
-
-                    result.isFailure -> {
-                        val exception = result.exceptionOrNull()
-                        if (exception !== null) {
-                            changeErrorMessage(exception.message)
-                        }
-                    }
-
                     result.isSuccess -> {
                         val response = result.getOrNull()
                         if (response != null) {
@@ -84,9 +68,14 @@ class RefundByTxIdViewModel : ViewModel() {
                         }
                     }
 
+                    result.isFailure -> {
+                        val exception = result.exceptionOrNull()
+                        if (exception !== null) {
+                            changeErrorMessage(exception.message)
+                        }
+                    }
                 }
             }
         }
     }
-
 }

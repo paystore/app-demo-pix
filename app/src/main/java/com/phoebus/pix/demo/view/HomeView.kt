@@ -16,6 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +29,9 @@ import androidx.navigation.NavController
 import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.ui.theme.components.MainButton
 import com.phoebus.pix.demo.utils.getMainItems
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.phastpay.sdk.client.PixClient
+import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,15 +58,20 @@ fun HomeView(pixClinte: PixClient, navController: NavController) {
                 )
             },
             content = {
-                if (pixClinte.isAppPixInstalled()){
+                if (pixClinte.isAppPixInstalled()) {
                     MainGrid(Modifier.padding(it), navController)
                 } else {
                     CheckAppPix(Modifier.padding(it), pixClinte.isAppPixInstalled())
-                }
+                        LaunchedEffect(Unit) {
+                            delay(30000)
+                            exitProcess(0)
+                        }
+                    }
             }
         )
     }
 }
+
 
 @Composable
 fun MainGrid(

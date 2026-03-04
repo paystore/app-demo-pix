@@ -13,8 +13,8 @@ android {
         applicationId = "com.phoebus.pix.demo"
         minSdk = 22
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1.0"
+        versionCode = 4
+        versionName = "1.0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -74,12 +74,11 @@ val activityVersion = "1.9.0"
 val lifecycleVersion = "2.7.0"
 val coreVersion = "1.13.0"
 val gsonVersion = "2.10.1"
-val pixSdkVersion = "1.0.1.0"
+val pixSdkVersion = "1.0.0.0"
 
 dependencies {
 
-    implementation("com.phoebus.libraries:pix-sdk:$pixSdkVersion")
-    //implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar")))) // faz referencia ao .aar local
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation("androidx.core:core-ktx:$coreVersion")
     implementation("androidx.activity:activity-compose:$activityVersion")
 

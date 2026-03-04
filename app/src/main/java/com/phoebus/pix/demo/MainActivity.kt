@@ -14,18 +14,18 @@ import androidx.navigation.navArgument
 import com.phoebus.pix.demo.services.SyncDataService
 import com.phoebus.pix.demo.ui.theme.components.Destinations
 import com.phoebus.pix.demo.utils.ConstantsUtils
-import com.phoebus.pix.demo.view.CheckAppPixView
-import com.phoebus.pix.demo.view.ClientIDView
+import com.phoebus.pix.demo.view.IsAppPixInstalledView
+import com.phoebus.pix.demo.view.ConsultCobByClientIdView
 import com.phoebus.pix.demo.view.CobCreateView
-import com.phoebus.pix.demo.view.ConsultLoading
+import com.phoebus.pix.demo.view.ConsultCobView
 import com.phoebus.pix.demo.view.FilterPixView
 import com.phoebus.pix.demo.view.FindPixView
 import com.phoebus.pix.demo.view.HomeView
 import com.phoebus.pix.demo.view.ListPixView
 import com.phoebus.pix.demo.view.RefundByTxIdView
 import com.phoebus.pix.demo.view.RefundPixView
-import com.phoebus.pix.demo.view.TxIdView
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.pix.demo.view.ConsultByTxIdView
+import com.phoebus.phastpay.sdk.client.PixClient
 import com.phoebus.pix.ui.theme.AppsmartdemopixTheme
 
 
@@ -55,12 +55,12 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Destinations.CHEACKAPPPIX.name
                     ) {
-                        CheckAppPixView(pixClient) { navController.navigateUp() }
+                        IsAppPixInstalledView(pixClient) { navController.navigateUp() }
                     }
                     composable(
                         route = Destinations.FILTERPIX.name
                     ) {
-                        FilterPixView(navController) {
+                        FilterPixView(pixClient = pixClient, navController = navController, isReport = false) {
                             navController.navigateUp()
                         }
                     }
@@ -85,14 +85,14 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Destinations.CLIENTID.name
                     ) {
-                        ClientIDView(pixClient) {
+                        ConsultCobByClientIdView(pixClient) {
                             navController.navigateUp()
                         }
                     }
                     composable(
                         route = Destinations.TXID.name
                     ) {
-                        TxIdView(pixClient) {
+                        ConsultByTxIdView(pixClient) {
                             navController.navigateUp()
                         }
                     }
@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Destinations.CONSULTLOADING.name
                      ) {
-                        ConsultLoading(
+                        ConsultCobView(
                             navController,
                             pixClient = pixClient
                         )
@@ -137,6 +137,13 @@ class MainActivity : ComponentActivity() {
                         RefundPixView(pixClient, navController) {
                             navController.navigateUp()
 
+                        }
+                    }
+                    composable(
+                        route = Destinations.REPORT.name
+                    ){
+                        FilterPixView(pixClient, navController, isReport = true) {
+                            navController.navigateUp()
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 package com.phoebus.pix.demo.view
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,13 +36,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.phoebus.phastpay.sdk.client.PixClient
 import com.phoebus.pix.demo.R
-import com.phoebus.pix.demo.viewmodels.ConsultPixClientIdRequestViewModel
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.pix.demo.ui.components.PhButton
+import com.phoebus.pix.demo.utils.ResponseUtils
+import com.phoebus.pix.demo.viewmodels.ConsultPixByClientIdViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientIDView(pixClient: PixClient, navigateUp: () -> Unit) {
+fun ConsultCobByClientIdView(pixClient: PixClient, navigateUp: () -> Unit) {
 
     Scaffold(
         topBar = {
@@ -70,8 +73,12 @@ fun ClientIDView(pixClient: PixClient, navigateUp: () -> Unit) {
             )
         },
         content = {
-            val viewModel: ConsultPixClientIdRequestViewModel = viewModel()
-            ClientIdFind(modifier = Modifier.padding(it), pixClient = pixClient, viewModel = viewModel)
+            val viewModel: ConsultPixByClientIdViewModel = viewModel()
+            ClientIdFind(
+                modifier = Modifier.padding(it),
+                pixClient = pixClient,
+                viewModel = viewModel
+            )
         }
     )
 }
@@ -80,12 +87,23 @@ fun ClientIDView(pixClient: PixClient, navigateUp: () -> Unit) {
 fun ClientIdFind(
     modifier: Modifier = Modifier,
     pixClient: PixClient,
-    viewModel: ConsultPixClientIdRequestViewModel = viewModel()
+    viewModel: ConsultPixByClientIdViewModel = viewModel()
 ) {
 
     val focusManager = LocalFocusManager.current
     var clientId by remember { mutableStateOf(TextFieldValue()) }
     val context = LocalContext.current
+    val successMessage = viewModel.successMessage;
+    val errorMessage = viewModel.erroMessage;
+
+    var lastShownMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        if (!errorMessage.isNullOrEmpty() && errorMessage != lastShownMessage) {
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+        lastShownMessage = errorMessage
+    }
 
     Column(
         modifier = Modifier
@@ -111,14 +129,22 @@ fun ClientIdFind(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ElevatedButton(
-            onClick = {
-                viewModel.sendRequest(pixClient, clientId.text, context)
-                clientId = TextFieldValue("")
-            },
+        PhButton(
+            text = stringResource(R.string.get_pix),
+            enabled = clientId.text.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Consultar")
+            viewModel.sendRequest(pixClient, clientId.text)
+            clientId = TextFieldValue("")
+        }
+
+        successMessage?.let { message ->
+            val responseUtils = ResponseUtils()
+            Toast.makeText(
+                context,
+                responseUtils.messageConsultPix(context, message),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 }

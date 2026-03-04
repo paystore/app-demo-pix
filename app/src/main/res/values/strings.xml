@@ -4,6 +4,8 @@
     <string name="sync_data">Sync Data</string>
     <string name="pix_list">Listar PIX</string>
     <string name="pix_find">Consultar PIX</string>
+    <string name="loading_message">Carregando…</string>
+    <string name="loading_getting">Consultando…</string>
     <string name="app_pix_is_installed">Verificar App Pix Instalado</string>
     <string name="app_pix_sync_data">Sinc. dados</string>
     <string name="pix_refund">Devolução por Tx-Id</string>
@@ -18,6 +20,8 @@
     <string name="another_period">Outro \nperíodo</string>
     <string name="print_customer_receipt">Imprimir Via Cliente</string>
     <string name="print_merchant_receipt">Imprimir Via Estabelecimento</string>
+    <string name="preview_customer_receipt">Exibir Via Cliente</string>
+    <string name="preview_merchant_receipt">Exibir Via Estabelecimento</string>
     <string name="active">Ativa</string>
     <string name="sale">Venda</string>
     <string name="refunded">Devolvido</string>
@@ -33,5 +37,10 @@
     <string name="empty_list">Lista Vazia</string>
     <string name="CONSULTLOADING"> Loading de Consulta</string>
     <string name="Consulta">Consulta</string>
-    <string name="refund">Devolução.</string>
+    <string name="refund">Devolução</string>
+    <string name="report">Relatorio</string>
+    <string name="refund_pix">Devolver</string>
+    <string name="get_pix">Consultar</string>
+    <string name="report_summary">Resumido</string>
+    <string name="report_detailed">Detalhado</string>
 </resources>

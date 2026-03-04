@@ -3,11 +3,9 @@ package com.phoebus.pix.demo.data.model
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
-data class CreateCobRequest(
-    @SerializedName("cob_value")
-    val cobValue: String?,
-    @SerializedName("pix_client_id")
-    val pixClientId: String?,
+data class ConsultPixByTxIdRequest(
+    @SerializedName("tx_id")
+    val txId: String,
     @SerializedName("print_customer_receipt")
     val printCustomerReceipt: Boolean,
     @SerializedName("print_merchant_receipt")

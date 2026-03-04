@@ -15,15 +15,29 @@ import com.phoebus.pix.demo.R
 
 @Composable
 fun CheckboxPrint(
-    printCustomerReceiptChecked: Boolean,
-    printMerchantReceiptChecked: Boolean,
+    printCustomerReceiptChecked: Boolean = false,
+    printMerchantReceiptChecked: Boolean = false,
+    previewCustomerReceiptChecked: Boolean = true,
+    previewMerchantReceiptChecked: Boolean = true,
     onPrintCustomerReceiptChange: (Boolean) -> Unit,
-    onPrintMerchantReceiptChange: (Boolean) -> Unit
+    onPrintMerchantReceiptChange: (Boolean) -> Unit,
+    onPreviewCustomerReceiptChange: (Boolean) -> Unit = {},
+    onPreviewMerchantReceiptChange: (Boolean) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        CheckboxWithLabel(
+            checked = previewCustomerReceiptChecked,
+            onCheckedChange = onPreviewCustomerReceiptChange,
+            text = stringResource(R.string.preview_customer_receipt)
+        )
+        CheckboxWithLabel(
+            checked = previewMerchantReceiptChecked,
+            onCheckedChange = onPreviewMerchantReceiptChange,
+            text = stringResource(R.string.preview_merchant_receipt)
+        )
         CheckboxWithLabel(
             checked = printCustomerReceiptChecked,
             onCheckedChange = onPrintCustomerReceiptChange,
@@ -44,7 +58,8 @@ fun CheckboxWithLabel(
     text: String
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Checkbox(
             checked = checked,

@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.Toast
 import com.phoebus.pix.demo.R
-import com.phoebus.pix.sdk.PixClient
+import com.phoebus.phastpay.sdk.client.PixClient
 class SyncDataService(val context: Context) {
 
 fun execute(pixClient: PixClient) {

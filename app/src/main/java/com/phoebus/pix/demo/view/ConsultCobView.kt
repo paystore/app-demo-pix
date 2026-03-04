@@ -3,22 +3,17 @@ package com.phoebus.pix.demo.view
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -31,22 +26,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.phoebus.phastpay.sdk.client.PixClient
 import com.phoebus.pix.demo.R
 import com.phoebus.pix.demo.ui.components.CheckboxPrint
-import com.phoebus.pix.demo.viewmodels.RefundByTxIdViewModel
-import com.phoebus.phastpay.sdk.client.PixClient
+import com.phoebus.pix.demo.ui.components.LoadingIndicator
 import com.phoebus.pix.demo.ui.components.PhButton
+import com.phoebus.pix.demo.ui.components.dialogs.PhDialog
+import com.phoebus.pix.demo.viewmodels.ConsultViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RefundByTxIdView(pixClient: PixClient, navigateUp: () -> Unit) {
+fun ConsultCobView(
+    navController: NavController,
+    pixClient: PixClient
+) {
 
     Scaffold(
         topBar = {
@@ -57,14 +55,14 @@ fun RefundByTxIdView(pixClient: PixClient, navigateUp: () -> Unit) {
                 ),
                 title = {
                     Text(
-                        text = stringResource(R.string.pix_refund),
+                        text = stringResource(R.string.pix_find),
                         fontWeight = FontWeight.Normal,
                         modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateUp) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button),
@@ -75,30 +73,32 @@ fun RefundByTxIdView(pixClient: PixClient, navigateUp: () -> Unit) {
             )
         },
         content = {
-            RefundByTxId(modifier = Modifier.padding(it), pixClient = pixClient)
+            CobConsult(
+                Modifier.padding(it),
+                pixClient,
+                onModalClick = { navController.popBackStack() })
         }
     )
+
 }
 
-@Composable
-fun RefundByTxId(
-    modifier: Modifier,
+@Composable()
+fun CobConsult(
+    modifier: Modifier = Modifier,
     pixClient: PixClient,
-    viewModel: RefundByTxIdViewModel = viewModel()
+    viewModel: ConsultViewModel = viewModel(),
+    onModalClick: () -> Unit = {}
 ) {
 
-    val focusManager = LocalFocusManager.current
-    var txId by remember { mutableStateOf(TextFieldValue()) }
-    val context = LocalContext.current
     val printCustomerReceipt = viewModel.printCustomerReceipt.collectAsState()
     val printMerchantReceipt = viewModel.printMerchantReceipt.collectAsState()
     val previewCustomerReceipt = viewModel.previewCustomerReceipt.collectAsState()
     val previewMerchantReceipt = viewModel.previewMerchantReceipt.collectAsState()
     val dialogMessage = viewModel.dialogMessage.collectAsState().value
     val errorMessage = viewModel.errorMessage.collectAsState().value
-
+    val isLoading = viewModel.isLoading.collectAsState().value
+    val context = LocalContext.current;
     var lastShownMessage by remember { mutableStateOf<String?>(null) }
-
     LaunchedEffect(errorMessage) {
         if (!errorMessage.isNullOrEmpty() && errorMessage != lastShownMessage) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -106,56 +106,64 @@ fun RefundByTxId(
         lastShownMessage = errorMessage
     }
 
-    Column(
-        modifier = Modifier
+
+    Surface(
+        modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(10.dp),
+        color = MaterialTheme.colorScheme.background
     ) {
 
-        OutlinedTextField(
-            value = txId,
-            onValueChange = {
-                txId = it
-            },
-            label = { Text("Tx-ID") },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (isLoading) {
+            LoadingIndicator(text = stringResource(R.string.loading_getting))
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+                CheckboxPrint(
+                    printCustomerReceiptChecked = printCustomerReceipt.value,
+                    printMerchantReceiptChecked = printMerchantReceipt.value,
+                    previewCustomerReceiptChecked = previewCustomerReceipt.value,
+                    previewMerchantReceiptChecked = previewMerchantReceipt.value,
+                    onPreviewCustomerReceiptChange = {
+                        viewModel.changePreviewCustomerReceipt()
+                    },
+                    onPreviewMerchantReceiptChange = {
+                        viewModel.changePreviewMerchantReceipt()
+                    },
+                    onPrintCustomerReceiptChange = {
+                        viewModel.changePrintCustomerReceipt()
+                    },
+                    onPrintMerchantReceiptChange = {
+                        viewModel.changePrintMerchantReceipt()
+                    },
+                )
 
-        PhButton(
-            onClick = { viewModel.sendRequest(pixClient, txId.text) },
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.refund_pix),
-            enabled = txId.text.isNotBlank()
-        )
+                PhButton(
+                    onClick = { viewModel.consultTransactions(pixClient) },
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.get_pix)
+                )
+            }
 
-        CheckboxPrint(
-            printCustomerReceiptChecked = printCustomerReceipt.value,
-            printMerchantReceiptChecked = printMerchantReceipt.value,
-            previewCustomerReceiptChecked = previewCustomerReceipt.value,
-            previewMerchantReceiptChecked = previewMerchantReceipt.value,
-            onPreviewCustomerReceiptChange = {
-                viewModel.changePreviewCustomerReceipt()
-            },
-            onPreviewMerchantReceiptChange = {
-                viewModel.changePreviewMerchantReceipt()
-            },
-            onPrintCustomerReceiptChange = {
-                viewModel.changePrintCustomerReceipt()
-            },
-            onPrintMerchantReceiptChange = {
-                viewModel.changePrintMerchantReceipt()
-            },
-        )
+        }
+
+        dialogMessage?.let { message ->
+            PhDialog(
+                onDismissRequest = {},
+                onConfirm = {
+                    onModalClick()
+                },
+                message = message
+            )
+        }
+
     }
+
 }
 
 

@@ -1,54 +1,67 @@
 package com.phoebus.pix.demo.services
 
 
-import android.app.AlertDialog
-import android.content.Context
-import android.widget.Toast
+import android.util.Log
 import com.google.gson.Gson
-import com.phoebus.pix.demo.R
+import com.phoebus.phastpay.sdk.client.PixClient
 import com.phoebus.pix.demo.data.model.PixErrorResponse
-import com.phoebus.pix.demo.data.model.PixResponse
 import com.phoebus.pix.demo.data.model.RefundPixRequest
-import com.phoebus.pix.sdk.PixClient
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 
-fun RefundPixService(
-    pixClient: PixClient,
-    printCustomerReceipt: Boolean,
-    printMerchantReceipt: Boolean,
-    context: Context
+class RefundPixService(
 
 ) {
+    operator fun invoke(
+        pixClient: PixClient,
+        printCustomerReceipt: Boolean,
+        printMerchantReceipt: Boolean,
+        previewCustomerReceipt: Boolean,
+        previewMerchantReceipt: Boolean
+    ) = callbackFlow {
+        try {
+            val gson: Gson = Gson()
+            if (!pixClient.isBound()) {
+                trySend(Result.failure(Exception("Applicação não conectada")));
+                close()
+                return@callbackFlow
+            }
 
-    val gson: Gson = Gson()
-    val refundPixRequest = RefundPixRequest( printCustomerReceipt, printMerchantReceipt)
-    val callback = object : PixClient.RefundCallback {
-        override fun onError(response: String?) {
-            println("Erro ao devolver $response")
+            val refundPixRequest = RefundPixRequest(
+                printCustomerReceipt,
+                printMerchantReceipt,
+                previewCustomerReceipt,
+                previewMerchantReceipt
+            )
 
-            val alertDialog = AlertDialog.Builder(context)
-            alertDialog.setTitle(R.string.refund)
-                .setMessage("Não foi possível realizar a devolução.")
-                .setNeutralButton("Ok") { _, _ -> }
-                .show()
+            val callback = object : PixClient.RefundCallback {
+                override fun onError(response: String?) {
+                    response?.let { Log.e("RefundPixService", it) };
+                    val responseError = gson.fromJson(response, PixErrorResponse::class.java)
+                    trySend(Result.failure(Exception(responseError.errorMessage)));
+                    close()
+                }
 
+                override fun onSuccess(response: String?) {
+                    response?.let { Log.d("RefundPixService", it) };
+                    if (!response.isNullOrEmpty()) {
+                        trySend(Result.success(true));
+                    }
+                    close()
+                }
+
+            }
+
+            pixClient.refund(
+                refundPixRequest.toJson(),
+                callback
+            )
+
+
+        } catch (e: Exception) {
+            trySend(Result.failure(e))
+            close()
         }
-
-        override fun onSuccess(response: String?) {
-
-            val alertDialog = AlertDialog.Builder(context)
-            alertDialog.setTitle(R.string.refund)
-                .setMessage("Devolução realizada com sucesso.")
-                .setNeutralButton("Ok") { _, _ -> }
-                .show()
-
-        }
-
-        }
-
-    pixClient.refund(
-        gson.toJson(refundPixRequest),
-        callback
-    )
-
-
+        awaitClose { }
+    }
 }

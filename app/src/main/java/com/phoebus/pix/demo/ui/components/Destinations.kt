@@ -15,5 +15,6 @@ enum class Destinations(@StringRes val title: Int) {
     CLIENTID(title = R.string.client_id),
     TXID(title = R.string.tx_id),
     REFUND(title = R.string.refund),
-    CONSULTLOADING(R.string.CONSULTLOADING)
+    CONSULTLOADING(R.string.CONSULTLOADING),
+    REPORT(title = R.string.report)
 }

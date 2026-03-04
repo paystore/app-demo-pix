@@ -11,11 +11,13 @@ class ResponseUtils {
 
         return "${context.getString(R.string.consult)}: \n" +
                "${context.getString(R.string.value)}: ${response.cobValue} \n" +
-               "${context.getString(R.string.status)}: ${chargeStatus(context, response.status.getValue())} \n" +
+               "${context.getString(R.string.status)}: ${
+                   response.status?.getValue()?.let { chargeStatus(context, it) } ?: ChargeStatus.UNKNOWN.name
+               } \n" +
                "${context.getString(R.string.tx_id)}: ${response.txID}"
     }
 
-    fun chargeStatus(context: Context, status: String): String {
+    fun chargeStatus(context: Context, status: String?): String {
         return when (status) {
             ChargeStatus.ACTIVE.getValue() -> context.getString(R.string.active)
             ChargeStatus.CONCLUDED.getValue() -> context.getString(R.string.sale)
